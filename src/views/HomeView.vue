@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import Footer from '@/components/Footer.vue'
 import { BookOpenIcon } from '@heroicons/vue/24/solid'
+import Header from '@/components/Header.vue'
 
 </script>
 
 <template>
+   <Header />
   <!-- Aplica los colores de fondo y texto según las variables -->
   <main class="bg-[var(--body-bg)] text-[var(--body-text)] transition-colors">
     <div class="max-w-[1400px]  px-5 mx-auto p-40">

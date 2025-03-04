@@ -2,10 +2,9 @@
   <!-- Contenedor flotante con transición y blur -->
   <div
     :class="[
-      'fixed top-0 w-full z-50 transition-transform duration-300 ',
+      'fixed top-0 w-full z-50 transition-transform duration-300',
       isHeaderHidden ? '-translate-y-full' : 'translate-y-0'
     ]"
-
   >
     <!-- Contenedor hijo con el borde y fondo blanco (modo claro por defecto) -->
     <div
@@ -89,20 +88,124 @@
         </RouterLink>
       </nav>
 
-      <!-- Botones de acción -->
+      <!-- Botones de acción (versión escritorio) -->
       <div class="hidden md:flex-1 md:flex items-center justify-end space-x-3 pr-5">
-        <button
-          class="px-4 py-2 rounded-full text-[#03045E]
-                 hover:bg-gray-300 transition-colors cursor-pointer text-lg"
-        >
-          Únete →
-        </button>
-        <button
-          class="px-4 py-2 rounded-full bg-[#0096C7] text-white
-                 hover:bg-[#0077B6] transition-colors cursor-pointer text-lg"
-        >
-          Contáctanos →
-        </button>
+        <!-- Dropdown condicional según autenticación -->
+        <template v-if="!isAuthenticated">
+          <!-- Botón "Únete" para usuarios no autenticados -->
+          <div class="relative" ref="dropdownRef">
+            <button
+              @click="toggleDropdown"
+              class="flex px-4 py-2 rounded-full bg-[#0096C7] text-white
+                     hover:bg-[#0077B6] transition-colors cursor-pointer text-lg"
+            >
+              Únete
+              <svg
+                class="w-[20px] h-[20px] ml-2 transition-transform"
+                :class="{ 'rotate-180': isDropdownOpen }"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0
+                     111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                />
+              </svg>
+            </button>
+
+            <transition
+              enter-active-class="transition-opacity duration-200 ease-out"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition-opacity duration-150 ease-in"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 translate-y-2"
+            >
+              <div
+                v-if="isDropdownOpen"
+                class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 border border-gray-200"
+              >
+                <RouterLink
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition"
+                  :to="{ name: 'login' }"
+                >
+                  Iniciar Sesión
+                </RouterLink>
+                <RouterLink
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition"
+                  :to="{ name: 'register' }"
+                >
+                  Registrarse
+                </RouterLink>
+              </div>
+            </transition>
+          </div>
+        </template>
+
+        <template v-else>
+          <!-- Dropdown para usuario autenticado -->
+          <div class="relative" ref="dropdownRef">
+            <button
+              @click="toggleDropdown"
+              class="flex items-center px-2 py-2 rounded-full bg-white hover:bg-gray-300 transition-colors cursor-pointer"
+            >
+              <!-- Placeholder de Avatar (puedes reemplazar con una imagen real) -->
+              <img
+                src="../assets/avatar.png"
+                alt="Avatar"
+                class="w-8 h-8 rounded-full"
+              />
+              <svg
+                class="w-5 h-5 ml-2 transition-transform text-[var(--c-primary)]"
+                :class="{ 'rotate-180': isDropdownOpen }"
+                fill="text-[var(--c-primary)]"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0
+                     111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                />
+              </svg>
+            </button>
+
+            <transition
+              enter-active-class="transition-opacity duration-200 ease-out"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition-opacity duration-150 ease-in"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 translate-y-2"
+            >
+              <div
+                v-if="isDropdownOpen"
+                class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 border border-gray-200"
+              >
+                <!-- Nombre del usuario -->
+                <div class="block px-4 py-2 text-gray-700 font-semibold">
+                  {{ userName }}
+                </div>
+                <div
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                  @click="goToProfile"
+                >
+                  Perfil
+                </div>
+                <div
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                  @click="goToLikes"
+                >
+                  Mis Libros
+                </div>
+                <div
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                  @click="handleLogout"
+                >
+                  Cerrar Sesión
+                </div>
+              </div>
+            </transition>
+          </div>
+        </template>
 
         <!-- Checkbutton para modo claro/oscuro -->
         <label class="relative inline-flex items-center cursor-pointer">
@@ -167,20 +270,121 @@
             Sobre Nosotros
           </RouterLink>
         </nav>
-        <!-- Botones de acción en móvil -->
+
+        <!-- Versión móvil del dropdown / botones de acción -->
         <div class="grid grid-cols-2 gap-2 p-4 mt-2">
-          <button
-            class="px-4 py-2 rounded-full bg-[#023E8A] text-white
-                   hover:bg-[#0077B6] transition-all p-2 cursor-pointer"
-          >
-            Únete →
-          </button>
-          <button
-            class="px-4 py-2 rounded-full bg-[#0096C7] text-white
-                   hover:bg-[#0077B6] transition-all p-2 cursor-pointer"
-          >
-            Contáctanos →
-          </button>
+          <template v-if="!isAuthenticated">
+            <!-- Botón "Únete" en móvil -->
+            <div class="relative" ref="dropdownRefMobile">
+              <button
+                @click="toggleDropdownMobile"
+                class="px-4 py-2 rounded-full text-[#03045E] hover:bg-gray-300 transition-colors cursor-pointer text-lg flex items-center gap-2"
+              >
+                Únete
+                <svg
+                  class="w-4 h-4 transition-transform"
+                  :class="{ 'rotate-180': isDropdownOpenMobile }"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0
+                       111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0
+                       010-1.414z"
+                  />
+                </svg>
+              </button>
+
+              <transition
+                enter-active-class="transition-opacity duration-200 ease-out"
+                enter-from-class="opacity-0 translate-y-2"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-opacity duration-150 ease-in"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 translate-y-2"
+              >
+                <div
+                  v-if="isDropdownOpenMobile"
+                  class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 border border-gray-200"
+                >
+                  <RouterLink
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition"
+                    :to="{ name: 'login' }"
+                  >
+                    Iniciar Sesión
+                  </RouterLink>
+                  <RouterLink
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition"
+                    :to="{ name: 'register' }"
+                  >
+                    Registrarse
+                  </RouterLink>
+                </div>
+              </transition>
+            </div>
+          </template>
+          <template v-else>
+            <!-- Avatar en móvil -->
+            <div class="relative" ref="dropdownRefMobile">
+              <button
+                @click="toggleDropdownMobile"
+                class="flex items-center px-2 py-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors cursor-pointer"
+              >
+                <img
+                  src="../assets/avatar.png"
+                  alt="tss"
+                  class="w-[20px] rounded-full"
+                />
+                <svg
+                  class="w-4 h-4 ml-2 transition-transform"
+                  :class="{ 'rotate-180': isDropdownOpenMobile }"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1
+                       0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1
+                       1 0 010-1.414z"
+                  />
+                </svg>
+              </button>
+              <transition
+                enter-active-class="transition-opacity duration-200 ease-out"
+                enter-from-class="opacity-0 translate-y-2"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-opacity duration-150 ease-in"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 translate-y-2"
+              >
+                <div
+                  v-if="isDropdownOpenMobile"
+                  class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 border border-gray-200"
+                >
+                  <div class="block px-4 py-2 text-gray-700 font-semibold">
+                    {{ userName }}
+                  </div>
+                  <div
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                    @click="goToProfile"
+                  >
+                    Perfil
+                  </div>
+                  <div
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                    @click="goToLikes"
+                  >
+                    Me Gustas
+                  </div>
+                  <div
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                    @click="handleLogout"
+                  >
+                    Cerrar Sesión
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
 
           <!-- Versión móvil del checkbutton -->
           <label class="col-span-2 relative inline-flex items-center justify-center mt-3 cursor-pointer">
@@ -191,21 +395,21 @@
               @change="toggleDarkMode"
             />
             <div
-            class="w-14 h-7 bg-white peer-focus:outline-none
-                   rounded-full border border-gray-300 peer
-                   peer-checked:bg-gray-600 transition-colors relative"
-          >
-            <!-- Ícono de sol (modo claro) -->
-            <SunIcon
-              v-if="!isDark"
-              class="absolute left-1 top-1 w-5 h-5 text-gray-600"
-            />
-            <!-- Ícono de luna (modo oscuro) -->
-            <MoonIcon
-              v-else
-              class="absolute right-1 top-1 w-5 h-5 text-white"
-            />
-          </div>
+              class="w-14 h-7 bg-white peer-focus:outline-none
+                     rounded-full border border-gray-300 peer
+                     peer-checked:bg-gray-600 transition-colors relative"
+            >
+              <!-- Ícono de sol (modo claro) -->
+              <SunIcon
+                v-if="!isDark"
+                class="absolute left-1 top-1 w-5 h-5 text-gray-600"
+              />
+              <!-- Ícono de luna (modo oscuro) -->
+              <MoonIcon
+                v-else
+                class="absolute right-1 top-1 w-5 h-5 text-white"
+              />
+            </div>
           </label>
         </div>
       </div>
@@ -214,9 +418,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-// Importamos los iconos de Heroicons
+import { ref, onMounted, onUnmounted, computed, watch, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
+
+// Importamos nuestro authStore
+import { useAuthStore } from '@/stores/authStore'
 
 // Estado para mostrar/ocultar el menú hamburguesa
 const isMenuOpen = ref(false)
@@ -247,9 +454,86 @@ onUnmounted(() => {
 const isDark = ref(false)
 function toggleDarkMode() {
   isDark.value = !isDark.value
-  // Alterna la clase .app-dark en <html> para tu modo oscuro/claro
   document.documentElement.classList.toggle('app-dark', isDark.value)
 }
+
+// --- LÓGICA PARA EL DROPDOWN EN ESCRITORIO ---
+const isDropdownOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
+
+// --- LÓGICA PARA EL DROPDOWN EN MÓVIL ---
+const isDropdownOpenMobile = ref(false)
+const dropdownRefMobile = ref<HTMLElement | null>(null)
+
+// Manejo del click para abrir/cerrar
+function toggleDropdown() {
+  // Abrimos/cerramos solo al hacer click
+  isDropdownOpen.value = !isDropdownOpen.value
+}
+function toggleDropdownMobile() {
+  isDropdownOpenMobile.value = !isDropdownOpenMobile.value
+}
+
+// Cerrar dropdown si se hace click fuera
+function handleClickOutside(event: MouseEvent) {
+  // Para escritorio
+  if (
+    isDropdownOpen.value &&
+    dropdownRef.value &&
+    !dropdownRef.value.contains(event.target as Node)
+  ) {
+    isDropdownOpen.value = false
+  }
+  // Para móvil
+  if (
+    isDropdownOpenMobile.value &&
+    dropdownRefMobile.value &&
+    !dropdownRefMobile.value.contains(event.target as Node)
+  ) {
+    isDropdownOpenMobile.value = false
+  }
+}
+
+// Agregamos listener global para detectar clicks fuera
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+// --- LÓGICA DE AUTENTICACIÓN (Pinia) ---
+const authStore = useAuthStore()
+
+// Computed que determina si hay token y user => usuario autenticado
+const isAuthenticated = computed(() => !!authStore.token && !!authStore.user)
+
+// Nombre del usuario guardado en el store (se sincroniza con localStorage)
+const userName = computed(() => authStore.user?.nombre || '')
+
+// Funciones de navegación
+const router = useRouter()
+function goToProfile() {
+  router.push({ name: 'profile' })
+}
+function goToLikes() {
+  router.push({ name: 'likes' })
+}
+
+// Logout llamando a authStore
+  function handleLogout() {
+  authStore.logout();
+  router.push({ name: 'home' });
+}
+
+
+// Opcional: Escuchar cambios en el store para reactividad inmediata
+watch(
+  () => authStore.user,
+  (newVal) => {
+    // Si user cambia, actualizamos algo si se requiere
+  }
+)
 </script>
 
 <style scoped>

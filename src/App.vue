@@ -1,7 +1,21 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import Header from '@/components/Header.vue'
+import { watch } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+watch(
+  () => authStore.isAuthenticated,
+  (isAuth) => {
+    if (!isAuth) {
+      router.push({ name: 'login' })
+    }
+  }
+)
 </script>
+
 
 <template>
   <header>
@@ -9,9 +23,9 @@ import Header from '@/components/Header.vue'
     <div class="wrapper">
 
 
-      <Header />
+
     </div>
   </header>
-
+  <PrimeToast />
   <RouterView />
 </template>

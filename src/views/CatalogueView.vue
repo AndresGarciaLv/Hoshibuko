@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import Footer from '@/components/Footer.vue'
 import GalleriaComponent from '@/components/Catalogue/GalleriaComponent.vue'
+import Header from '@/components/Header.vue'
 import {
   BookOpenIcon,
   BeakerIcon,
@@ -23,6 +24,7 @@ const categories = ref([
 
 
 <template>
+   <Header />
   <main class="bg-[var(--body-bg)] text-[var(--body-text)] transition-colors">
     <div class="max-w-[1400px] px-5 mx-auto p-30">
       <!-- Sección de Categorías -->
