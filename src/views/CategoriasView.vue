@@ -2,6 +2,8 @@
   <!-- Contenedor principal en flex para Sidebar y contenido -->
   <div class="flex h-screen" :style="{ backgroundColor: 'var(--body-bg)', color: 'var(--body-text)' }">
     <!-- Sidebar a la izquierda -->
+
+
     <div>
       <AdminSidebar />
     </div>
@@ -44,9 +46,9 @@
           <template #header>
             <div class="flex flex-wrap gap-2 items-center justify-between">
               <h4 class="m-0 font-bold">Gestión de Categorías</h4>
-              <div
+              <div :style="{ backgroundColor: 'var(--body-bg)', borderColor: 'var(--text-subtle)', color: 'var(--body-text)' }"
                 class="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md
-                       bg-white focus-within:border-blue-500 transition-colors"
+                         transition-colors"
               >
                 <i class="pi pi-search text-gray-500"></i>
                 <InputText

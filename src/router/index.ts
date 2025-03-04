@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/stores/authStore'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import CatalogueView from '@/views/CatalogueView.vue'
+
 import LoginView from '@/views/LoginView.vue'
 import AboutView from '@/views/AboutView.vue'
 import RegisterView from '@/views/RegisterView.vue'
@@ -9,15 +9,18 @@ import Dashboard from '@/views/Dashboard.vue'
 import LibrosView from '@/views/LibrosView.vue'
 import CategoriasView from '@/views/CategoriasView.vue'
 import AutoresView from '@/views/AutoresView.vue'
+import UsuariosView from '@/views/UsuariosView.vue'
+import LibrosCategorias from '@/views/LibrosCategorias.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'home', component: HomeView },
-    { path: '/catalogue', name: 'catalogue', component: CatalogueView },
+    { path: '/catalogue', name: 'catalogue', component: LibrosCategorias },
     { path: '/about', name: 'about', component: AboutView },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/register', name: 'register', component: RegisterView },
+
     {
       path: '/dashboard',
       name: 'dashboard',
@@ -49,6 +52,15 @@ const router = createRouter({
       path: '/autores',
       name: 'autores',
       component: AutoresView,
+      meta: {
+        requiresAuth: true,
+        requiredRoles: ['ADMIN'],
+      },
+    },
+    {
+      path: '/usuarios',
+      name: 'usuarios',
+      component: UsuariosView,
       meta: {
         requiresAuth: true,
         requiredRoles: ['ADMIN'],

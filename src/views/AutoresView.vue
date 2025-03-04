@@ -42,9 +42,8 @@
           <template #header>
             <div class="flex flex-wrap gap-2 items-center justify-between">
               <h4 class="m-0 font-bold">Gestión de Autores</h4>
-              <div
-                class="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md bg-white focus-within:border-blue-500 transition-colors"
-              >
+              <div :style="{ backgroundColor: 'var(--body-bg)', borderColor: 'var(--text-subtle)', color: 'var(--body-text)' }"
+                  class="flex items-center gap-2 px-3 py-2 border rounded-md transition-all" >
                 <i class="pi pi-search text-gray-500"></i>
                 <InputText
                   v-model="filters['global'].value"

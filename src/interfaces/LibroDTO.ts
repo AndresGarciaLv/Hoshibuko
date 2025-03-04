@@ -15,5 +15,6 @@ export interface GetLibroDTO {
   autorNombre: string;       // Nombre del autor
   categoriaIds: number[];    // IDs de categorías
   categorias: string[];      // Nombres de categorías
-  urlImagen: string | null;         // URL de la imagen
+  urlImagen: string | null;
+   // URL de la imagen
 }

@@ -27,10 +27,22 @@
     --btn-text: var(--c-white);
     --btn-hover: var(--c-accent);
 
+    /* Variable para el hover en sidebar */
+    --sidebar-hover-bg: #f2f2f2;
+
  /*    SubTEXTOS GRIS  */
 
     --text-subtle: #4a5568; /* gris oscuro en modo claro */
     --overlay-color: rgba(255, 255, 255, 0.5);
+
+    .sidebar-link {
+      @apply flex items-center gap-4 p-2 rounded-lg transition-colors;
+      color: var(--body-text);
+    }
+    
+    .sidebar-link:hover {
+      background-color: var(--sidebar-hover-bg);
+    }
   }
   
   /* ============================= */
@@ -60,6 +72,20 @@
     /*    SubTEXTOS GRIS  */
     --text-subtle: #dbe2eb;
     --overlay-color: rgba(0, 0, 0, 0.5);
+
+      /* Variable para el hover en sidebar */
+    --sidebar-hover-bg: #2b3747;
+
+
+    .sidebar-link {
+      @apply flex items-center gap-4 p-2 rounded-lg transition-colors;
+      color: var(--body-text);
+    }
+    
+    .sidebar-link:hover {
+      background-color: var(--sidebar-hover-bg);
+    }
+    
   }
   
   

@@ -2,7 +2,7 @@
   <!-- Contenedor flotante con transición y blur -->
   <div
     :class="[
-      'fixed top-0 w-full z-50 transition-transform duration-300',
+      'fixed top-0 w-full z-50 transition-transform duration-300 rouded rounded-full',
       isHeaderHidden ? '-translate-y-full' : 'translate-y-0'
     ]"
   >
@@ -20,7 +20,7 @@
           alt="HoshiBunko Logo"
           class="w-10 h-10 rounded-full"
         />
-        <span class="text-[#03045E] font-bold text-xl">
+        <span class="text-[var(--c-accent)] pl-2 font-bold text-xl">
           HoshiBunko
         </span>
       </div>
@@ -80,6 +80,7 @@
         >
           Catálogo
         </RouterLink>
+
         <RouterLink
           class="hover:text-[#0077B6] transition-colors text-lg"
           :to="{ name: 'about' }"
@@ -184,22 +185,22 @@
                 <div class="block px-4 py-2 text-gray-700 font-semibold">
                   {{ userName }}
                 </div>
+                <ProfileUser
+      :visible="isProfileModalVisible"
+      @update:visible="isProfileModalVisible = $event"
+    />
                 <div
-                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
-                  @click="goToProfile"
-                >
-                  Perfil
-                </div>
-                <div
-                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                  class="text-gray-700 flex p-3 items-center cursor-pointer hover:bg-gray-200"
                   @click="goToLikes"
                 >
+                <BookOpenIcon class="w-5 h-5 mr-2 text-[var(--c-accent)]" />
                   Mis Libros
                 </div>
                 <div
-                  class="block px-4 py-2 text-gray-700 hover:bg-gray-200 transition cursor-pointer"
+                  class="text-gray-700 flex p-3 items-center cursor-pointer hover:bg-gray-200"
                   @click="handleLogout"
                 >
+                <ArrowRightEndOnRectangleIcon class="w-5 h-5 mr-2 text-[var(--c-accent)]" />
                   Cerrar Sesión
                 </div>
               </div>
@@ -208,32 +209,29 @@
         </template>
 
         <!-- Checkbutton para modo claro/oscuro -->
-        <label class="relative inline-flex items-center cursor-pointer">
-          <!-- Checkbox oculto -->
-          <input
-            type="checkbox"
-            class="sr-only peer"
-            :checked="isDark"
-            @change="toggleDarkMode"
-          />
-          <!-- Fondo del switch -->
-          <div
-            class="w-14 h-7 bg-white peer-focus:outline-none
-                   rounded-full border border-gray-300 peer
-                   peer-checked:bg-gray-600 transition-colors relative"
-          >
-            <!-- Ícono de sol (modo claro) -->
-            <SunIcon
-              v-if="!isDark"
-              class="absolute left-1 top-1 w-5 h-5 text-gray-600"
+        <div class="pl-2 flex justify-center">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              class="sr-only peer"
+               :checked="themeStore.isDark"
+               @change="themeStore.toggleTheme()"
             />
-            <!-- Ícono de luna (modo oscuro) -->
-            <MoonIcon
-              v-else
-              class="absolute right-1 top-1 w-5 h-5 text-white"
-            />
-          </div>
-        </label>
+            <div
+              class="w-14 h-7 bg-white rounded-full border transition-colors relative"
+              :style="{ borderColor: 'var(--text-subtle)', backgroundColor: themeStore.isDark ? 'var(--c-bg-3)' : 'var(--body-bg)' }"
+            >
+              <SunIcon
+                v-if="!themeStore.isDark"
+                class="absolute left-1 top-1 w-5 h-5 text-gray-600"
+              />
+              <MoonIcon
+                v-else
+                class="absolute right-1 top-1 w-5 h-5 text-white"
+              />
+            </div>
+          </label>
+        </div>
       </div>
     </div>
 
@@ -387,30 +385,29 @@
           </template>
 
           <!-- Versión móvil del checkbutton -->
-          <label class="col-span-2 relative inline-flex items-center justify-center mt-3 cursor-pointer">
+          <div class="pl-2 flex justify-center">
+          <label class="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
               class="sr-only peer"
-              :checked="isDark"
-              @change="toggleDarkMode"
+               :checked="themeStore.isDark"
+               @change="themeStore.toggleTheme()"
             />
             <div
-              class="w-14 h-7 bg-white peer-focus:outline-none
-                     rounded-full border border-gray-300 peer
-                     peer-checked:bg-gray-600 transition-colors relative"
+              class="w-14 h-7 bg-white rounded-full border transition-colors relative"
+              :style="{ borderColor: 'var(--text-subtle)', backgroundColor: themeStore.isDark ? 'var(--c-bg-3)' : 'var(--body-bg)' }"
             >
-              <!-- Ícono de sol (modo claro) -->
               <SunIcon
-                v-if="!isDark"
+                v-if="!themeStore.isDark"
                 class="absolute left-1 top-1 w-5 h-5 text-gray-600"
               />
-              <!-- Ícono de luna (modo oscuro) -->
               <MoonIcon
                 v-else
                 class="absolute right-1 top-1 w-5 h-5 text-white"
               />
             </div>
           </label>
+        </div>
         </div>
       </div>
     </transition>
@@ -420,7 +417,21 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid'
+import { SunIcon, MoonIcon, ArrowRightEndOnRectangleIcon } from '@heroicons/vue/24/solid'
+import {
+  BookOpenIcon,
+} from '@heroicons/vue/24/outline';
+import ProfileUser from '@/components/ProfileUser.vue';
+import { useThemeStore } from '@/stores/themeStore';
+
+const themeStore = useThemeStore();
+
+const isProfileModalVisible = ref(false);
+
+// Función que se llama cuando se hace click en "Perfil" del sidebar
+function showProfileModal() {
+  isProfileModalVisible.value = true;
+}
 
 // Importamos nuestro authStore
 import { useAuthStore } from '@/stores/authStore'
@@ -450,13 +461,6 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
 
-// Control del modo oscuro
-const isDark = ref(false)
-function toggleDarkMode() {
-  isDark.value = !isDark.value
-  document.documentElement.classList.toggle('app-dark', isDark.value)
-}
-
 // --- LÓGICA PARA EL DROPDOWN EN ESCRITORIO ---
 const isDropdownOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
@@ -477,7 +481,7 @@ function toggleDropdownMobile() {
 // Cerrar dropdown si se hace click fuera
 function handleClickOutside(event: MouseEvent) {
   // Para escritorio
-  if (
+  /* if (
     isDropdownOpen.value &&
     dropdownRef.value &&
     !dropdownRef.value.contains(event.target as Node)
@@ -491,7 +495,7 @@ function handleClickOutside(event: MouseEvent) {
     !dropdownRefMobile.value.contains(event.target as Node)
   ) {
     isDropdownOpenMobile.value = false
-  }
+  } */
 }
 
 // Agregamos listener global para detectar clicks fuera
